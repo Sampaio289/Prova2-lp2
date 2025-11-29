@@ -1,27 +1,34 @@
 import csv
 
-with open('livros.txt', 'r' ) as lv:
-    livros = [linha.strip().split(', ') for linha in lv if linha.strip()]
+with open("livros.txt", "r", encoding="utf-8") as arq:
+    livros = list(csv.reader(arq))
 
-avaliacoes = []
+resultado = []
 
-for ano, titulo, altor in livros:
+for livro in livros:
+    ano, titulo, autor = livro
+
     while True:
         try:
-            nota = float(input(f"Digite uma nota de 0 a 10 para '{titulo}':"))
-            
+            nota = float(input(f"Digite a nota para '{titulo}': "))
             if 0 <= nota <= 10:
-                avaliacoes.append([ano, titulo, altor, nota])
-                break  
+                break
             else:
-                print("  Nota inválida! Digite um número entre 0 e 10.")
+                print("A nota deve estar entre 0 e 10.")
         except ValueError:
-            print(" Entrada inválida! Digite apenas números.")
+            print("Digite um número válido.")
 
+    while True:
+        status = input(f"Status de leitura para '{titulo}' (lido / lendo / na fila): ").strip().lower()
+        if status in ("lido", "lendo", "na fila"):
+            break
+        else:
+            print("Status inválido. Digite exatamente: lido, lendo ou na fila.")
 
-with open('livros_avaliacao.csv', 'w', newline='', encoding='utf-8') as lv:
-    writer = csv.writer(lv)
-    writer.writerow(['Ano','livros','Nota'])
-    writer.writerows(avaliacoes)
+    resultado.append([ano, titulo, autor, nota, status])
 
-print("\n Avaliações salvas com sucesso no arquivo 'livros_avaliacao.csv'!")
+with open("livros_avaliacao.txt", "w", encoding="utf-8", newline="") as saida:
+    writer = csv.writer(saida)
+    writer.writerows(resultado)
+
+print("\n Arquivo 'livros_avaliacao.txt' criado com sucesso!")
